@@ -108,6 +108,8 @@ app.get("/", homeHandler);
 app.get("/product", getProducthandler);
 app.get("/productbybrand", getBrandProduct);
 app.post("/product", addProduct);
+app.delete("/product/:id", removeProduct);
+app.put("/product/:id", updateProduct);
 
 function homeHandler(req, res) {
   res.status(200).send("all done");
@@ -134,12 +136,13 @@ async function getProducthandler(req, res) {
 async function addProduct(req, res) {
   console.log(req.body);
   console.log(req.body.prodName);
-  const prodName = req.body.prodName;
-  const prodBrand = req.body.prodBrand;
-  const prodPrice = req.body.prodPrice;
-  const prodImage = req.body.prodImage;
-  const prodDisruption = req.body.prodDisruption;
-
+  // const prodName = req.body.prodName;
+  // const prodBrand = req.body.prodBrand;
+  // const prodPrice = req.body.prodPrice;
+  // const prodImage = req.body.prodImage;
+  // const prodDisruption = req.body.prodDisruption;
+  const { prodName, prodBrand, prodPrice, prodImage, prodDisruption } =
+    req.body;
   let newProduct = await ProductsModel.create({
     prodName,
     prodBrand,
@@ -148,6 +151,29 @@ async function addProduct(req, res) {
     prodDisruption,
   });
   res.send(newProduct);
+}
+
+async function removeProduct(req, res) {
+  const { id } = req.params;
+  let deleteProduct = await ProductsModel.findByIdAndDelete(id);
+  console.log(deleteProduct);
+  res.send(`${deleteProduct.name} has been deleted `);
+}
+
+async function updateProduct(req, res) {
+  console.log(req.body);
+  const { prodName, prodBrand, prodPrice, prodImage, prodDisruption } =
+    req.body;
+  const { id } = req.params;
+  const updateProduct = await ProductsModel.findByIdAndUpdate(id, {
+    prodName,
+    prodBrand,
+    prodPrice,
+    prodImage,
+    prodDisruption,
+  });
+  console.log(updateProduct);
+  res.send("product has been updated");
 }
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT} `);
