@@ -9,6 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 const PORT = process.env.PORT;
+const allProducts = require("./getproduct/product");
 
 // coneting to the mongoDB server
 
@@ -60,7 +61,6 @@ const product = new mongoose.Schema({
 });
 
 const ProductsModel = mongoose.model("product", product);
-
 // function seedMakupdata() {
 //   const Lippie_Pencil = new ProductsModel({
 //     prodName: "Lippie Pencil",
@@ -106,10 +106,17 @@ const ProductsModel = mongoose.model("product", product);
 // seedMakupdata();
 app.get("/", homeHandler);
 app.get("/product", getProducthandler);
+app.get("/allproducts", allProducts.getProducts);
 app.get("/productbybrand", getBrandProduct);
 app.post("/product", addProduct);
 app.delete("/product/:id", removeProduct);
 app.put("/product/:id", updateProduct);
+app.post("/person", getPersonhandler);
+
+function getPersonhandler(req, res) {
+  console.log(req.body);
+  res.send("person has been added");
+}
 
 function homeHandler(req, res) {
   res.status(200).send("all done");
@@ -144,11 +151,11 @@ async function addProduct(req, res) {
   const { prodName, prodBrand, prodPrice, prodImage, prodDisruption } =
     req.body;
   let newProduct = await ProductsModel.create({
-    prodName,
-    prodBrand,
-    prodPrice,
-    prodImage,
-    prodDisruption,
+    prodName: prodName,
+    prodBrand: prodBrand,
+    prodPrice: prodPrice,
+    prodImage: prodImage,
+    prodDisruption: prodDisruption,
   });
   res.send(newProduct);
 }
@@ -157,7 +164,8 @@ async function removeProduct(req, res) {
   const { id } = req.params;
   let deleteProduct = await ProductsModel.findByIdAndDelete(id);
   console.log(deleteProduct);
-  res.send(`${deleteProduct.name} has been deleted `);
+  let allMakeup = await ProductsModel.find({});
+  res.send(allMakeup);
 }
 
 async function updateProduct(req, res) {
@@ -165,15 +173,17 @@ async function updateProduct(req, res) {
   const { prodName, prodBrand, prodPrice, prodImage, prodDisruption } =
     req.body;
   const { id } = req.params;
-  const updateProduct = await ProductsModel.findByIdAndUpdate(id, {
+  await ProductsModel.findByIdAndUpdate(id, {
     prodName,
     prodBrand,
     prodPrice,
     prodImage,
     prodDisruption,
   });
-  console.log(updateProduct);
-  res.send("product has been updated");
+  let allMakeup = await ProductsModel.find({});
+  console.log(allMakeup);
+
+  res.send(allMakeup);
 }
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT} `);

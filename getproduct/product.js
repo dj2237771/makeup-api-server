@@ -5,10 +5,11 @@ const superagent = require("superagent");
 
 async function getProducts(req, res) {
   const url = `http://makeup-api.herokuapp.com/api/v1/products.json`;
+  console.log("working");
   superagent
     .get(url)
     .then((productdata) => {
-      const product = productdata.body.results;
+      const product = productdata.body;
       let productObject = product.map((item) => {
         return new Product(item);
       });
@@ -21,11 +22,11 @@ async function getProducts(req, res) {
 
 class Product {
   constructor(data) {
-    prodName = data.name;
-    prodBrand = data.brand;
-    prodPrice = data.prices;
-    prodImage = date.image_link;
-    prodDisruption = data.description;
+    this.prodName = data.name;
+    this.prodBrand = data.brand;
+    this.prodPrice = data.prices;
+    this.prodImage = data.image_link;
+    this.prodDisruption = data.description;
   }
 }
 
