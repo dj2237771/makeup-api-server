@@ -4,7 +4,7 @@ require("dotenv").config();
 const superagent = require("superagent");
 
 async function getProducts(req, res) {
-  const url = `http://makeup-api.herokuapp.com/api/v1/products.json`;
+  const url = `http://makeup-api.herokuapp.com/api/v1/products.json?brand=maybelline`;
   console.log("working");
   superagent
     .get(url)
@@ -22,6 +22,7 @@ async function getProducts(req, res) {
 
 class Product {
   constructor(data) {
+    this.userName = data.userName;
     this.prodName = data.name;
     this.prodBrand = data.brand;
     this.prodPrice = data.prices;

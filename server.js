@@ -47,12 +47,13 @@ const allProducts = require("./getproduct/product");
 // }
 // seedCatCollection();
 
-mongoose.connect("mongodb://localhost:27017/makeupProducts", {
+mongoose.connect("mongodb://localhost:27017/makeupProducts1", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
 const product = new mongoose.Schema({
+  userName: String,
   prodName: String,
   prodBrand: String,
   prodPrice: Number,
@@ -136,7 +137,9 @@ async function getBrandProduct(req, res) {
 }
 
 async function getProducthandler(req, res) {
-  let allProducts = await ProductsModel.find();
+  const userName = req.query.username;
+  let allProducts = await ProductsModel.find({ userName: userName });
+  console.log(allProducts);
   res.send(allProducts);
 }
 
@@ -148,9 +151,16 @@ async function addProduct(req, res) {
   // const prodPrice = req.body.prodPrice;
   // const prodImage = req.body.prodImage;
   // const prodDisruption = req.body.prodDisruption;
-  const { prodName, prodBrand, prodPrice, prodImage, prodDisruption } =
-    req.body;
+  const {
+    userName,
+    prodName,
+    prodBrand,
+    prodPrice,
+    prodImage,
+    prodDisruption,
+  } = req.body;
   let newProduct = await ProductsModel.create({
+    userName: userName,
     prodName: prodName,
     prodBrand: prodBrand,
     prodPrice: prodPrice,
